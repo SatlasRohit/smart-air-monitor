@@ -1,0 +1,173 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+}
+
+.dashboard {
+  padding: 40px;
+  min-height: 100vh;
+}
+
+/* Header */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.top-bar h1 {
+  margin: 0;
+}
+
+.summary {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.aqi-box {
+  background: #1e293b;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.3; }
+}
+
+/* Search */
+.search-bar {
+  margin: 25px 0;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+}
+
+/* Badge */
+.badge {
+  background: #7e22ce;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* Grid */
+.station-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 30px;
+}
+
+/* Card */
+.station-card {
+  background: #1e293b;
+  padding: 25px;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.station-card:hover {
+  transform: translateY(-5px);
+}
+
+.station-card h2 {
+  margin-top: 0;
+  color: #38bdf8;
+}
+
+.last-update {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-bottom: 20px;
+}
+
+/* Pollutant */
+.pollutant-row {
+  margin-bottom: 15px;
+}
+
+.pollutant-left {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.progress-container {
+  width: 100%;
+  background: #0f172a;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 22px;
+}
+
+.progress-bar {
+  height: 100%;
+  text-align: center;
+  line-height: 22px;
+  font-size: 12px;
+  color: white;
+  transition: width 0.4s ease;
+}
+
+/* Buttons */
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.graph-btn {
+  flex: 1;
+  padding: 10px;
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.graph-btn:hover {
+  transform: translateY(-2px);
+}
+
+.details-btn {
+  flex: 1;
+  padding: 10px;
+  background: linear-gradient(135deg, #9333ea, #7e22ce);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.details-btn:hover {
+  transform: translateY(-2px);
+}
