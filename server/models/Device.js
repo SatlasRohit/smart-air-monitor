@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 
-const deviceSchema = new mongoose.Schema({
-  name: String,
-  location: String,
-  status: {
-    type: String,
-    default: "active"
-  }
-});
+const dataSchema = new mongoose.Schema(
+  {
+    station: String,
+    pollutant: String,
+    value: Number,
+    lastUpdate: String
+  },
+  { timestamps: true }   // 🔥 VERY IMPORTANT
+);
 
-export default mongoose.model("Device", deviceSchema);
+export default mongoose.model("Data", dataSchema);
