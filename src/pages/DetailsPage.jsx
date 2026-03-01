@@ -13,6 +13,16 @@ const ALL_POLLUTANTS = [
   "NH3"
 ];
 
+/* 🔥 Normalize pollutant names */
+function normalizePollutant(name) {
+  if (!name) return "";
+
+  const upper = name.toUpperCase().trim();
+
+  if (upper === "O3") return "OZONE";
+  return upper;
+}
+
 function getAirExplanation(value) {
   if (value <= 50)
     return {
@@ -67,11 +77,14 @@ function DetailsPage() {
 
   const fetchStationData = async () => {
     try {
-      const res = await axios.get("/api/data");
+      const res = await axios.get("/api/data"); // ✅ Production safe
 
-      const filtered = res.data.filter(
-        item => item.station === decodedStation
-      );
+      const filtered = res.data
+        .filter(item => item.station === decodedStation)
+        .map(item => ({
+          ...item,
+          pollutant: normalizePollutant(item.pollutant)
+        }));
 
       setData(filtered);
     } catch (err) {
@@ -79,10 +92,13 @@ function DetailsPage() {
     }
   };
 
-  /* Ensure all pollutants exist, else set 0 */
+  /* Ensure all pollutants exist */
   const completeData = useMemo(() => {
     return ALL_POLLUTANTS.map(pollutant => {
-      const found = data.find(d => d.pollutant === pollutant);
+      const found = data.find(
+        d => normalizePollutant(d.pollutant) === pollutant
+      );
+
       return {
         pollutant,
         value: found ? Number(found.value) : 0
@@ -119,7 +135,6 @@ function DetailsPage() {
         Last Updated: {lastUpdated}
       </p>
 
-      {/* Air Quality Summary */}
       <div
         className="air-status-box"
         style={{ backgroundColor: explanation.color }}
@@ -129,7 +144,6 @@ function DetailsPage() {
         <strong>Average AQI: {averageAQI}</strong>
       </div>
 
-      {/* Pollutant Table */}
       <div className="table-container">
         <table>
           <thead>
