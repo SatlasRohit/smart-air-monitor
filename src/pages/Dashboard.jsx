@@ -34,7 +34,7 @@ function Dashboard() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/data");
+      const res = await axios.get("/api/data");
       setData(res.data);
     } catch (err) {
       console.log(err);
