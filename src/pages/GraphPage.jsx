@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import socket from "../services/socket"; // 🔥 important
+import socket from "../services/socket";
 import {
   LineChart,
   Line,
@@ -21,12 +21,14 @@ function GraphPage() {
   useEffect(() => {
     fetchHistory();
 
-    /* 🔥 Listen for live updates */
     socket.on("newData", (newData) => {
-      if (newData.station === decodedStation) {
+      if (
+        newData.station &&
+        newData.station.toLowerCase().includes(decodedStation.toLowerCase())
+      ) {
         const formatted = {
           time: new Date(newData.createdAt).toLocaleTimeString(),
-          value: newData.value
+          value: Number(newData.value) || 0
         };
 
         setData(prev => [...prev, formatted]);
@@ -34,8 +36,7 @@ function GraphPage() {
     });
 
     return () => socket.off("newData");
-
-  }, []);
+  }, [decodedStation]);
 
   const fetchHistory = async () => {
     try {
@@ -43,10 +44,12 @@ function GraphPage() {
         `/api/data/history/${decodedStation}`
       );
 
-      const formatted = res.data.map(item => ({
-        time: new Date(item.createdAt).toLocaleTimeString(),
-        value: item.value
-      }));
+      const formatted = res.data
+        .filter(item => item.createdAt && item.value !== null)
+        .map(item => ({
+          time: new Date(item.createdAt).toLocaleTimeString(),
+          value: Number(item.value) || 0
+        }));
 
       setData(formatted);
 
@@ -84,40 +87,44 @@ function GraphPage() {
         {decodedStation} - Pollution Timeline
       </h1>
 
-      <div
-        style={{
-          width: "100%",
-          overflowX: "auto",
-          background: "#1e293b",
-          padding: "20px",
-          borderRadius: "12px"
-        }}
-      >
+      {data.length === 0 ? (
+        <p>No historical data available yet...</p>
+      ) : (
         <div
           style={{
-            width: `${chartWidth}px`,
-            height: "400px"
+            width: "100%",
+            overflowX: "auto",
+            background: "#1e293b",
+            padding: "20px",
+            borderRadius: "12px"
           }}
         >
-          <LineChart
-            width={chartWidth}
-            height={400}
-            data={data}
+          <div
+            style={{
+              width: `${chartWidth}px`,
+              height: "400px"
+            }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-            <XAxis dataKey="time" />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="value"
-              stroke="#38bdf8"
-              strokeWidth={3}
-              dot={false}
-            />
-          </LineChart>
+            <LineChart
+              width={chartWidth}
+              height={400}
+              data={data}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis dataKey="time" />
+              <YAxis />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#38bdf8"
+                strokeWidth={3}
+                dot={false}
+              />
+            </LineChart>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
