@@ -67,7 +67,7 @@ function DetailsPage() {
 
   const fetchStationData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/data");
+      const res = await axios.get("/api/data");
 
       const filtered = res.data.filter(
         item => item.station === decodedStation
