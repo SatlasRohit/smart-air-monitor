@@ -1,5 +1,5 @@
 import express from "express";
-import Data from "../models/Data.js";   // make sure path matches your project
+import Data from "../models/SensorData.js";
 
 const router = express.Router();
 
@@ -9,21 +9,23 @@ router.get("/", async (req, res) => {
     const data = await Data.find().sort({ createdAt: -1 });
     res.json(data);
   } catch (err) {
+    console.error("Error fetching latest data:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-/* 🔥 GET history for a station (FIXED VERSION) */
+/* 🔥 GET history for a station */
 router.get("/history/:station", async (req, res) => {
   try {
     const stationName = decodeURIComponent(req.params.station);
 
     const history = await Data.find({
-      station: { $regex: stationName, $options: "i" }  // ✅ partial + case insensitive
+      station: { $regex: stationName, $options: "i" }
     }).sort({ createdAt: 1 });
 
     res.json(history);
   } catch (err) {
+    console.error("Error fetching history:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -36,6 +38,7 @@ router.post("/", async (req, res) => {
 
     res.status(201).json(newData);
   } catch (err) {
+    console.error("Error saving data:", err);
     res.status(400).json({ error: err.message });
   }
 });

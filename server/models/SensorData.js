@@ -1,10 +1,13 @@
 import mongoose from "mongoose";
 
-const sensorSchema = new mongoose.Schema({
-  station: String,
-  pollutant: String,
-  value: Number,
-  lastUpdate: String
-}, { timestamps: true });   // MUST BE HERE
+const sensorDataSchema = new mongoose.Schema(
+  {
+    station: { type: String, required: true },
+    pollutant: { type: String, required: true },
+    value: { type: Number },
+    lastUpdate: { type: String }
+  },
+  { timestamps: true }
+);
 
-export default mongoose.model("SensorData", sensorSchema);
+export default mongoose.model("SensorData", sensorDataSchema);
