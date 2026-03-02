@@ -20,12 +20,12 @@ router.get("/history/:station", async (req, res) => {
     const stationName = decodeURIComponent(req.params.station);
 
     const history = await Data.find({
-      station: stationName   // 🔥 exact match
+      station: { $regex: stationName, $options: "i" }
     }).sort({ createdAt: 1 });
 
     res.json(history);
-
   } catch (err) {
+    console.error("Error fetching history:", err);
     res.status(500).json({ error: err.message });
   }
 });
