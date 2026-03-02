@@ -13,13 +13,14 @@ const ALL_POLLUTANTS = [
   "NH3"
 ];
 
-/* 🔥 Normalize pollutant names */
+/* Normalize pollutant names */
 function normalizePollutant(name) {
   if (!name) return "";
 
   const upper = name.toUpperCase().trim();
 
   if (upper === "O3") return "OZONE";
+
   return upper;
 }
 
@@ -77,10 +78,14 @@ function DetailsPage() {
 
   const fetchStationData = async () => {
     try {
-      const res = await axios.get("/api/data"); // ✅ Production safe
+      const res = await axios.get("/api/data");
 
       const filtered = res.data
-        .filter(item => item.station === decodedStation)
+        .filter(item =>
+          item.station &&
+          item.station.trim().toLowerCase() ===
+          decodedStation.trim().toLowerCase()
+        )
         .map(item => ({
           ...item,
           pollutant: normalizePollutant(item.pollutant)
@@ -88,7 +93,7 @@ function DetailsPage() {
 
       setData(filtered);
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching station data:", err);
     }
   };
 
@@ -101,19 +106,21 @@ function DetailsPage() {
 
       return {
         pollutant,
-        value: found ? Number(found.value) : 0
+        value: found && found.value != null ? Number(found.value) : 0
       };
     });
   }, [data]);
 
-  const lastUpdated = data[0]?.lastUpdate || "No Data";
+  const lastUpdated =
+    data.length > 0 ? data[0].lastUpdate : "No Data";
 
   const averageAQI = useMemo(() => {
     if (completeData.length === 0) return 0;
 
-    const values = completeData.map(d => d.value);
+    const validValues = completeData.map(d => d.value);
+
     return Math.round(
-      values.reduce((a, b) => a + b, 0) / values.length
+      validValues.reduce((a, b) => a + b, 0) / validValues.length
     );
   }, [completeData]);
 
