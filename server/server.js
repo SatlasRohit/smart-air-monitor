@@ -42,11 +42,12 @@ const httpServer = createServer(app);
 initSocket(httpServer);
 
 // Use Azure dynamic port
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
+
+if (!PORT) {
+  console.error("PORT not defined by Azure!");
+}
 
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  
-  // Start simulator after server starts
-  startSimulator();
 });
