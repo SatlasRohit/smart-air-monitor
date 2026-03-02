@@ -78,16 +78,16 @@ function DetailsPage() {
 
   const fetchStationData = async () => {
     try {
-      const res = await axios.get(
-        `/api/data/history/${encodeURIComponent(decodedStation)}`
-      );
+      const res = await axios.get("/api/data");
 
-      const cleaned = res.data.map(item => ({
-        ...item,
-        pollutant: normalizePollutant(item.pollutant)
-      }));
+      const filtered = res.data
+        .filter(item => item.station === decodedStation)
+        .map(item => ({
+          ...item,
+          pollutant: normalizePollutant(item.pollutant)
+        }));
 
-      setData(cleaned);
+      setData(filtered);
 
     } catch (err) {
       console.error("Error fetching station data:", err);
