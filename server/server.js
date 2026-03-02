@@ -10,8 +10,10 @@ import dataRoutes from "./routes/dataRoutes.js";
 import { initSocket } from "./socket.js";
 import { startSimulator } from "../Simulator/deviceSimulator.js";
 
-// Load environment variables
-dotenv.config();
+// 🔥 Load .env ONLY in development
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 
 // Connect to MongoDB
 connectDB();
@@ -29,11 +31,11 @@ app.use("/api/data", dataRoutes);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files from dist folder
+// Serve static files
 app.use(express.static(path.join(__dirname, "../dist")));
 
-// For React Router (SPA support)
-app.use((req, res) => {
+// React Router support
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../dist", "index.html"));
 });
 
@@ -41,13 +43,17 @@ app.use((req, res) => {
 const httpServer = createServer(app);
 initSocket(httpServer);
 
-// Use Azure dynamic port
+// 🔥 Use Azure dynamic PORT (DO NOT fallback to 5000)
 const PORT = process.env.PORT;
 
+console.log("ENV PORT:", PORT);
+
 if (!PORT) {
-  console.error("PORT not defined by Azure!");
+  console.error("❌ PORT not defined! Azure should set it.");
+  process.exit(1);
 }
 
-httpServer.listen(PORT, () => {
+// 🔥 Important: Bind to 0.0.0.0 for Azure Linux
+httpServer.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
